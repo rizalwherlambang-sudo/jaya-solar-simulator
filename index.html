@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JAYA | Solar Investment Simulator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--navy:#10243a;--blue:#2563eb;--teal:#0f9d8a;--bg:#f3f6fa;--muted:#64748b;--line:#dce4ee}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#172b42;font:14px/1.5 Inter,system-ui,Arial}
+header{background:linear-gradient(120deg,#10243a,#17466a);color:white;padding:26px max(22px,calc((100% - 1180px)/2))}
+header .eyebrow{color:#8bd8cf;font-size:11px;letter-spacing:2px;font-weight:700}h1{margin:5px 0;font-size:27px}header p{margin:4px 0;color:#c9d7e6}
+main{max-width:1180px;margin:24px auto;padding:0 18px}.grid{display:grid;grid-template-columns:350px 1fr;gap:18px}.panel,.metric{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 18px #16324a0a}
+h2{font-size:16px;margin:0 0 14px}.sub{font-size:12px;color:var(--muted);margin:-8px 0 14px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:4px}.field.full{grid-column:1/-1}label{font-size:11px;color:#52647a;font-weight:700}input,select{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px;background:white;font:inherit;color:#172b42}input:focus,select:focus{outline:2px solid #bfdbfe;border-color:var(--blue)}
+button{border:0;border-radius:9px;background:var(--blue);color:white;padding:11px 15px;font-weight:700;cursor:pointer}button.secondary{background:#e8eef6;color:#1e3a5f}button:disabled{opacity:.55;cursor:wait}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.status{font-size:12px;margin-top:10px;color:var(--muted);min-height:20px}.status.ok{color:#087c68}.status.err{color:#b42318}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.metric span{font-size:11px;color:var(--muted)}.metric strong{display:block;font-size:21px;margin-top:5px}.metric small{color:var(--muted)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.chartbox{height:300px}.tablewrap{overflow:auto;max-height:420px}table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{padding:8px;border-bottom:1px solid #e8edf3;text-align:right}th{background:#f6f8fb;color:#52647a;position:sticky;top:0}th:first-child,td:first-child{text-align:left}
+.note{background:#fff8e8;border:1px solid #f4dfae;border-radius:10px;padding:12px;color:#75531a;font-size:12px;margin-top:16px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{font-size:11px;padding:4px 9px;border-radius:30px;background:#e8f7f3;color:#087c68;font-weight:700}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.charts{grid-template-columns:1fr}.fields{grid-template-columns:1fr 1fr}header{padding:22px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="eyebrow">JAYA ENERGY ANALYTICS</div><h1>Solar Investment Simulator</h1><p>PVGIS Typical Meteorological Year · Solar PV · Battery Storage · Financial Estimation</p></header>
+<main>
+<div class="grid">
+<section class="panel">
+<h2>Project & Solar Resource</h2><p class="sub">Masukkan koordinat lokasi dan parameter sistem.</p>
+<div class="fields">
+<div class="field"><label>Latitude (°)</label><input id="lat" type="number" step="0.000001" value="-7.7956"></div>
+<div class="field"><label>Longitude (°)</label><input id="lon" type="number" step="0.000001" value="110.3695"></div>
+<div class="field"><label>Bulan TMY</label><select id="month"></select></div>
+<div class="field"><label>Tanggal</label><input id="day" type="number" min="1" max="31" value="21"></div>
+<div class="field"><label>Kapasitas PLTS (kWp)</label><input id="kwp" type="number" min="0.1" step="0.1" value="5"></div>
+<div class="field"><label>Performance Ratio (%)</label><input id="pr" type="number" min="1" max="100" value="80"></div>
+<div class="field"><label>Battery digunakan?</label><select id="battery"><option value="yes">Ya</option><option value="no">Tidak</option></select></div>
+<div class="field"><label>Kapasitas battery (kWh)</label><input id="battKwh" type="number" min="0" step="0.1" value="10"></div>
+<div class="field"><label>Minimum SOC (%)</label><input id="minSoc" type="number" min="0" max="90" value="20"></div>
+<div class="field"><label>Efisiensi battery (%)</label><input id="eff" type="number" min="1" max="100" value="95"></div>
+<div class="field"><label>Tagihan listrik (Rp/bulan)</label><input id="bill" type="number" min="0" value="1500000"></div>
+<div class="field"><label>Tarif listrik (Rp/kWh)</label><input id="tariff" type="number" min="0" value="1444.7"></div>
+<div class="field"><label>Porsi beban siang (%)</label><input id="dayLoad" type="number" min="0" max="100" value="40"></div>
+<div class="field"><label>Harga PLTS (Rp/kWp)</label><input id="capex" type="number" min="0" value="18000000"></div>
+<div class="field"><label>O&M tahunan (%)</label><input id="om" type="number" min="0" max="20" value="1"></div>
+<div class="field"><label>Tarif eskalasi (%)</label><input id="escalation" type="number" min="0" max="30" value="3"></div>
+</div>
+<div class="actions"><button id="loadBtn" onclick="loadPVGIS()">Update Solar Data</button><button class="secondary" onclick="resetExample()">Reset contoh</button></div>
+<div id="status" class="status">Data PVGIS belum diambil. Klik Update Solar Data.</div>
+<div class="note">Data yang diambil adalah TMY (cuaca meteorologi tipikal), bukan prakiraan cuaca hari ini. Estimasi produksi berbasis GHI × kapasitas × PR sebagai pendekatan awal.</div>
+</section>
+<section>
+<div class="metrics">
+<div class="metric"><span>GHI hari simulasi</span><strong id="ghiMetric">—</strong><small>kWh/m²/day</small></div>
+<div class="metric"><span>Produksi PV</span><strong id="pvMetric">—</strong><small>kWh/day</small></div>
+<div class="metric"><span>Energi impor PLN</span><strong id="gridMetric">—</strong><small>kWh/day</small></div>
+<div class="metric"><span>Penghematan estimasi</span><strong id="savingMetric">—</strong><small>Rp/month</small></div>
+</div>
+<div class="panel">
+<div class="toolbar"><div><h2>Hourly Energy Simulation</h2><p class="sub">Aliran energi per jam berdasarkan data PVGIS TMY</p></div><span class="pill" id="sourceTag">Menunggu data PVGIS</span></div>
+<div class="chartbox"><canvas id="energyChart"></canvas></div>
+</div>
+<div class="charts">
+<div class="panel"><h2>Battery State of Charge</h2><div class="chartbox"><canvas id="socChart"></canvas></div></div>
+<div class="panel"><h2>Solar Irradiance (GHI)</h2><div class="chartbox"><canvas id="ghiChart"></canvas></div></div>
+</div>
+</section>
+</div>
+<section class="panel" style="margin-top:18px">
+<div class="toolbar"><div><h2>Hourly Simulation Table</h2><p class="sub">Jam lokal WIB · energi per interval satu jam</p></div><button class="secondary" onclick="downloadCSV()">Export CSV</button></div>
+<div class="tablewrap"><table><thead><tr><th>Jam WIB</th><th>GHI W/m²</th><th>Beban kWh</th><th>PV kWh</th><th>PV ke beban</th><th>Charge</th><th>Discharge</th><th>Impor PLN</th><th>SOC %</th></tr></thead><tbody id="rows"><tr><td colspan="9" style="text-align:center;color:#64748b">Belum ada data. Ambil data PVGIS terlebih dahulu.</td></tr></tbody></table></div>
+</section>
+<section class="panel" style="margin-top:18px">
+<h2>Financial Snapshot (indikatif)</h2><div class="metrics" style="margin-bottom:0">
+<div class="metric"><span>Estimasi CAPEX</span><strong id="capexMetric">—</strong></div>
+<div class="metric"><span>Penghematan tahunan</span><strong id="annualMetric">—</strong></div>
+<div class="metric"><span>Simple Payback</span><strong id="paybackMetric">—</strong></div>
+<div class="metric"><span>O&M tahunan</span><strong id="omMetric">—</strong></div>
+</div><div class="note">Financial snapshot ini estimasi awal dari satu hari TMY yang dipilih dan belum menggantikan analisis 8.760 jam tahunan. Belum memperhitungkan ekspor listrik ke PLN, pajak/admin, degradasi modul, replacement battery, pembiayaan, dan tarif khusus pelanggan.</div>
+</section>
+</main>
+<script>
+const months=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+document.getElementById("month").innerHTML=months.map((m,i)=>`<option value="${i+1}" ${i===5?"selected":""}>${m}</option>`).join("");
+let simRows=[],charts={};
+const num=id=>Number(document.getElementById(id).value);
+const money=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n);
+const fmt=n=>new Intl.NumberFormat("id-ID",{maximumFractionDigits:2}).format(n);
+function setStatus(msg,type=""){let e=document.getElementById("status");e.textContent=msg;e.className="status "+type}
+async function loadPVGIS(){
+ const btn=document.getElementById("loadBtn");btn.disabled=true;setStatus("Menghubungi PVGIS melalui Netlify Function…");
+ try{
+  const lat=num("lat"),lon=num("lon");
+  if(!Number.isFinite(lat)||Math.abs(lat)>90||!Number.isFinite(lon)||Math.abs(lon)>180)throw Error("Koordinat tidak valid.");
+  const url=`/.netlify/functions/pvgis-tmy?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+  const res=await fetch(url);const data=await res.json();if(!res.ok)throw Error(data.error||"Gagal mengambil data PVGIS.");
+  const month=num("month"),day=num("day");
+  const chosen=data.hourly.filter(x=>x.month===month&&x.day===day);
+  if(chosen.length!==24)throw Error(`Data untuk ${day}/${month} tidak lengkap (${chosen.length} jam). Coba tanggal lain.`);
+  simulate(chosen);
+  document.getElementById("sourceTag").textContent=`PVGIS TMY · ${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)}`;
+  setStatus(`Berhasil mengambil ${data.count.toLocaleString("id-ID")} data TMY. Simulasi ${day}/${month} WIB diperbarui.`,"ok");
+ }catch(e){setStatus(e.message+" Pastikan website sudah di-deploy ke Netlify (Netlify Function tidak berjalan saat file HTML dibuka lokal).","err")}
+ finally{btn.disabled=false}
+}
+function simulate(hours){
+ const loadDaily=num("bill")/Math.max(1,num("tariff"))/30;
+ const dayShare=num("dayLoad")/100, loadDay=loadDaily*dayShare/11,loadNight=loadDaily*(1-dayShare)/13;
+ const kwp=num("kwp"),pr=num("pr")/100,battOn=document.getElementById("battery").value==="yes";
+ const cap=battOn?num("battKwh"):0,min=num("minSoc")/100,eff=num("eff")/100;
+ let soc=cap, totalGhi=0,totalPv=0,totalGrid=0,totalDirect=0,totalCharge=0,totalDis=0;
+ simRows=hours.map(h=>{
+  const hour=h.hour,load=(hour>=7&&hour<18)?loadDay:loadNight;
+  const ghi=h.ghi,pv=ghi/1000*kwp*pr;
+  const direct=Math.min(load,pv),surplus=Math.max(0,pv-direct),deficit=Math.max(0,load-direct);
+  const charge=battOn?Math.min(surplus,Math.max(0,cap-soc)/Math.max(eff,.01)):0;
+  soc=Math.min(cap,soc+charge*eff);
+  const discharge=battOn?Math.min(deficit,Math.max(0,soc-cap*min)*eff):0;
+  soc=Math.max(cap*min,soc-discharge/Math.max(eff,.01));
+  const grid=Math.max(0,deficit-discharge);
+  totalGhi+=ghi/1000;totalPv+=pv;totalGrid+=grid;totalDirect+=direct;totalCharge+=charge;totalDis+=discharge;
+  return {time:h.time,hour,ghi,load,pv,direct,charge,discharge,grid,socPct:cap?soc/cap*100:0};
+ });
+ const utilized=totalDirect+totalDis, saving=utilized*num("tariff")*30;
+ document.getElementById("ghiMetric").textContent=fmt(totalGhi);
+ document.getElementById("pvMetric").textContent=fmt(totalPv);
+ document.getElementById("gridMetric").textContent=fmt(totalGrid);
+ document.getElementById("savingMetric").textContent=money(saving);
+ const capex=kwp*num("capex"),annual=saving*12,om=capex*num("om")/100,payback=(annual-om)>0?capex/(annual-om):null;
+ document.getElementById("capexMetric").textContent=money(capex);
+ document.getElementById("annualMetric").textContent=money(annual);
+ document.getElementById("paybackMetric").textContent=payback?fmt(payback)+" tahun":"—";
+ document.getElementById("omMetric").textContent=money(om);
+ document.getElementById("rows").innerHTML=simRows.map(r=>`<tr><td>${String(r.hour).padStart(2,"0")}:00</td><td>${fmt(r.ghi)}</td><td>${fmt(r.load)}</td><td>${fmt(r.pv)}</td><td>${fmt(r.direct)}</td><td>${fmt(r.charge)}</td><td>${r.discharge?("-"+fmt(r.discharge)):"0"}</td><td>${fmt(r.grid)}</td><td>${fmt(r.socPct)}</td></tr>`).join("");
+ drawCharts();
+}
+function chart(id,type,labels,datasets,opts={}){if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom"}},scales:{y:{beginAtZero:true,...(opts.y||{})}}}})}
+function drawCharts(){
+ const labels=simRows.map(r=>String(r.hour).padStart(2,"0")+":00");
+ chart("energyChart","line",labels,[
+ {label:"Beban",data:simRows.map(r=>r.load),borderColor:"#64748b",backgroundColor:"#64748b",tension:.25},
+ {label:"Produksi PV",data:simRows.map(r=>r.pv),borderColor:"#e6a23c",backgroundColor:"#e6a23c",tension:.25},
+ {label:"Battery charge (+)",data:simRows.map(r=>r.charge),borderColor:"#0f9d8a",backgroundColor:"#0f9d8a",tension:.25},
+ {label:"Battery discharge (-)",data:simRows.map(r=>-r.discharge),borderColor:"#2563eb",backgroundColor:"#2563eb",tension:.25}
+ ]);
+ chart("socChart","line",labels,[{label:"SOC (%)",data:simRows.map(r=>r.socPct),borderColor:"#0f9d8a",backgroundColor:"#0f9d8a",fill:true,tension:.25}],{y:{min:0,max:100}});
+ chart("ghiChart","bar",labels,[{label:"GHI (W/m²)",data:simRows.map(r=>r.ghi),backgroundColor:"#e6a23c"}]);
+}
+function downloadCSV(){
+ if(!simRows.length)return alert("Ambil data PVGIS terlebih dahulu.");
+ const head=["time_WIB","GHI_Wm2","load_kWh","PV_kWh","PV_direct_kWh","battery_charge_kWh","battery_discharge_kWh","grid_import_kWh","SOC_percent"];
+ const lines=[head.join(","),...simRows.map(r=>[r.time,r.ghi,r.load,r.pv,r.direct,r.charge,r.discharge,r.grid,r.socPct].join(","))];
+ const a=document.createElement("a"),blob=new Blob([lines.join("\n")],{type:"text/csv"});a.href=URL.createObjectURL(blob);a.download="JAYA_PVGIS_hourly_simulation.csv";a.click();URL.revokeObjectURL(a.href);
+}
+function resetExample(){location.reload()}
+</script>
+</body></html>
