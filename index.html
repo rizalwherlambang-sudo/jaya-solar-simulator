@@ -1,154 +1,156 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>JAYA | Solar Investment Simulator</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAYA | Solar Investment & PVGIS Simulator</title>
 <style>
-:root{--navy:#10243a;--blue:#2563eb;--teal:#0f9d8a;--bg:#f3f6fa;--muted:#64748b;--line:#dce4ee}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#172b42;font:14px/1.5 Inter,system-ui,Arial}
-header{background:linear-gradient(120deg,#10243a,#17466a);color:white;padding:26px max(22px,calc((100% - 1180px)/2))}
-header .eyebrow{color:#8bd8cf;font-size:11px;letter-spacing:2px;font-weight:700}h1{margin:5px 0;font-size:27px}header p{margin:4px 0;color:#c9d7e6}
-main{max-width:1180px;margin:24px auto;padding:0 18px}.grid{display:grid;grid-template-columns:350px 1fr;gap:18px}.panel,.metric{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 18px #16324a0a}
-h2{font-size:16px;margin:0 0 14px}.sub{font-size:12px;color:var(--muted);margin:-8px 0 14px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:4px}.field.full{grid-column:1/-1}label{font-size:11px;color:#52647a;font-weight:700}input,select{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px;background:white;font:inherit;color:#172b42}input:focus,select:focus{outline:2px solid #bfdbfe;border-color:var(--blue)}
-button{border:0;border-radius:9px;background:var(--blue);color:white;padding:11px 15px;font-weight:700;cursor:pointer}button.secondary{background:#e8eef6;color:#1e3a5f}button:disabled{opacity:.55;cursor:wait}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.status{font-size:12px;margin-top:10px;color:var(--muted);min-height:20px}.status.ok{color:#087c68}.status.err{color:#b42318}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.metric span{font-size:11px;color:var(--muted)}.metric strong{display:block;font-size:21px;margin-top:5px}.metric small{color:var(--muted)}
-.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.chartbox{height:300px}.tablewrap{overflow:auto;max-height:420px}table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{padding:8px;border-bottom:1px solid #e8edf3;text-align:right}th{background:#f6f8fb;color:#52647a;position:sticky;top:0}th:first-child,td:first-child{text-align:left}
-.note{background:#fff8e8;border:1px solid #f4dfae;border-radius:10px;padding:12px;color:#75531a;font-size:12px;margin-top:16px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{font-size:11px;padding:4px 9px;border-radius:30px;background:#e8f7f3;color:#087c68;font-weight:700}
-@media(max-width:900px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.charts{grid-template-columns:1fr}.fields{grid-template-columns:1fr 1fr}header{padding:22px}h1{font-size:22px}}
+:root{--bg:#f3f6fb;--panel:#fff;--ink:#172b4d;--muted:#718096;--navy:#102746;--blue:#2563eb;--teal:#0d9488;--gold:#e9a23b;--line:#e5ebf3;--green:#16a36a;--red:#dc5555;--shadow:0 8px 28px rgba(20,45,78,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(120deg,#102746,#194d70);color:#fff;padding:26px max(22px,calc((100vw - 1440px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px}
+.brand{font-size:12px;letter-spacing:2px;font-weight:800;color:#9edbd6}.headline{font-size:25px;font-weight:800;margin:7px 0 4px}.sub{font-size:13px;color:#d2dfec}.status{border:1px solid #ffffff45;background:#ffffff12;padding:9px 13px;border-radius:30px;font-size:12px;white-space:nowrap}
+.wrap{max-width:1440px;margin:22px auto;padding:0 22px 45px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.toolbar small{color:var(--muted)}button{border:0;background:var(--blue);color:#fff;padding:10px 15px;border-radius:9px;font-weight:700;cursor:pointer}button.secondary{background:#e8eef7;color:#28415f}button:hover{filter:brightness(.96)}
+.layout{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.inputs{padding:18px;position:sticky;top:12px}.section-title{font-size:14px;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px}.section-title:before{content:"";width:4px;height:17px;border-radius:5px;background:var(--teal)}
+.field{margin:0 0 12px}.field label{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:700;color:#52647a;margin-bottom:5px}.field input,.field select{width:100%;padding:9px 10px;border:1px solid #dce4ef;border-radius:8px;background:#fbfcfe;color:var(--ink);font-size:13px;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb15}.required{background:#fff5e9;border:1px solid #f5d3a9;border-radius:11px;padding:12px;margin-bottom:15px}.required h3{font-size:11px;color:#a65d12;margin:0 0 10px;letter-spacing:.7px}.computed{background:#eaf7f2;border-radius:8px;padding:10px;font-size:11px;color:#22644d;margin:9px 0}.computed b{display:block;font-size:14px;margin-top:3px}.hint{font-size:10px;color:var(--muted);line-height:1.5}.fxrow{display:flex;gap:6px}.fxrow input{flex:1}.fxrow button{padding:8px;font-size:11px}
+.main{display:grid;gap:17px}.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kpi{padding:15px 14px;min-height:100px;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;width:65px;height:65px;border-radius:50%;right:-22px;top:-22px;background:var(--accent,#2563eb);opacity:.09}.kpi .label{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.5px}.kpi .value{font-size:21px;font-weight:850;margin:12px 0 4px;color:var(--ink);white-space:nowrap}.kpi .note{font-size:10px;color:var(--muted)}
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:14px}.gauge-card{padding:16px 18px}.gauge-title{font-size:13px;font-weight:800}.gauge-sub{font-size:10px;color:var(--muted);margin-top:4px}.gauge-wrap{height:175px;display:flex;justify-content:center;align-items:flex-end;position:relative;overflow:hidden;margin-top:4px}.gauge-svg{width:min(100%,330px);height:175px}.gauge-value{position:absolute;bottom:14px;text-align:center}.gauge-value strong{display:block;font-size:29px;letter-spacing:-1px}.gauge-value span{font-size:10px;color:var(--muted)}.gauge-foot{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:2px}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}.chart-card{padding:16px;min-width:0}.chart-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}.chart-head b{font-size:13px}.chart-head span{font-size:10px;color:var(--muted)}.chart{width:100%;height:230px;display:block}.chart text{font-family:inherit;fill:#7b8a9d;font-size:10px}.chart .grid{stroke:#e9eef5;stroke-width:1}.chart .axis{stroke:#cbd5e1;stroke-width:1}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-top:3px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.table-card{padding:16px;overflow:hidden}.table-scroll{overflow:auto;max-height:390px}table{border-collapse:collapse;width:100%;font-size:11px;white-space:nowrap}th{background:#f0f4f9;color:#52647a;text-align:right;padding:10px 9px;position:sticky;top:0}th:first-child,td:first-child{text-align:left}td{padding:9px;border-bottom:1px solid #edf1f6;text-align:right}tr:hover td{background:#f8fbff}.positive{color:var(--green);font-weight:700}.negative{color:var(--red)}.footnote{font-size:10px;color:var(--muted);line-height:1.6;margin-top:12px}.badge{display:inline-block;padding:5px 9px;border-radius:30px;font-size:10px;font-weight:800;background:#e6f6ee;color:#16804f}.badge.warn{background:#fff1e8;color:#b45b28}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.inputs{position:static}.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){header{padding:20px;align-items:flex-start;flex-direction:column}.wrap{padding:0 12px 30px}.kpis{grid-template-columns:repeat(2,1fr)}.gauges,.charts{grid-template-columns:1fr}.kpi .value{font-size:18px}.toolbar{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
-<header><div class="eyebrow">JAYA ENERGY ANALYTICS</div><h1>Solar Investment Simulator</h1><p>PVGIS Typical Meteorological Year · Solar PV · Battery Storage · Financial Estimation</p></header>
-<main>
-<div class="grid">
-<section class="panel">
-<h2>Project & Solar Resource</h2><p class="sub">Masukkan koordinat lokasi dan parameter sistem.</p>
-<div class="fields">
-<div class="field"><label>Latitude (°)</label><input id="lat" type="number" step="0.000001" value="-7.7956"></div>
-<div class="field"><label>Longitude (°)</label><input id="lon" type="number" step="0.000001" value="110.3695"></div>
-<div class="field"><label>Bulan TMY</label><select id="month"></select></div>
-<div class="field"><label>Tanggal</label><input id="day" type="number" min="1" max="31" value="21"></div>
-<div class="field"><label>Kapasitas PLTS (kWp)</label><input id="kwp" type="number" min="0.1" step="0.1" value="5"></div>
-<div class="field"><label>Performance Ratio (%)</label><input id="pr" type="number" min="1" max="100" value="80"></div>
-<div class="field"><label>Battery digunakan?</label><select id="battery"><option value="yes">Ya</option><option value="no">Tidak</option></select></div>
-<div class="field"><label>Kapasitas battery (kWh)</label><input id="battKwh" type="number" min="0" step="0.1" value="10"></div>
-<div class="field"><label>Minimum SOC (%)</label><input id="minSoc" type="number" min="0" max="90" value="20"></div>
-<div class="field"><label>Efisiensi battery (%)</label><input id="eff" type="number" min="1" max="100" value="95"></div>
-<div class="field"><label>Tagihan listrik (Rp/bulan)</label><input id="bill" type="number" min="0" value="1500000"></div>
-<div class="field"><label>Tarif listrik (Rp/kWh)</label><input id="tariff" type="number" min="0" value="1444.7"></div>
-<div class="field"><label>Porsi beban siang (%)</label><input id="dayLoad" type="number" min="0" max="100" value="40"></div>
-<div class="field"><label>Harga PLTS (Rp/kWp)</label><input id="capex" type="number" min="0" value="18000000"></div>
-<div class="field"><label>O&M tahunan (%)</label><input id="om" type="number" min="0" max="20" value="1"></div>
-<div class="field"><label>Tarif eskalasi (%)</label><input id="escalation" type="number" min="0" max="30" value="3"></div>
+<header>
+ <div><div class="brand">JAYA</div><div class="headline">Solar Investment Simulator</div><div class="sub">Financial feasibility dashboard • PLTS & Battery Energy Storage System</div></div>
+ <div class="status">● INTERACTIVE FINANCIAL MODEL</div>
+</header>
+<div class="wrap">
+ <div class="toolbar"><small>Ubah input di sebelah kiri. Seluruh KPI, speedometer, dan grafik akan diperbarui otomatis.</small><div><button class="secondary" onclick="resetDefaults()">Reset</button> <button onclick="downloadCSV()">Export Cash Flow CSV ↓</button></div></div>
+ <div class="layout">
+  <aside class="panel inputs">
+   <h2 class="section-title">Input Project</h2>
+   <div class="required">
+    <h3>01 · PARAMETER WAJIB DIISI</h3>
+    <div class="field"><label>Kapasitas sistem PLTS <span>kWp</span></label><input id="capacity" type="number" min="0" step="0.1" value="500"></div>
+    <div class="field"><label>Biaya investasi per Wp <span>USD/Wp</span></label><input id="priceWp" type="number" min="0" step="0.0001" value="0.3444"></div>
+    <div class="field"><label>Peak Sun Hours (PSH) <span>jam/hari</span></label><input id="psh" type="number" min="0" step="0.1" value="5"></div>
+    <div class="field"><label>Menggunakan Battery?</label><select id="battery"><option value="Tidak">Tidak</option><option value="Ya">Ya</option></select></div>
+    <div class="field"><label>Kurs USD/IDR <span>Rp/USD</span></label><div class="fxrow"><input id="fx" type="number" min="1" step="1" value="18293"><button class="secondary" onclick="refreshFX()">Update kurs</button></div><div class="hint" id="fxNote">Kurs contoh awal. Tekan Update kurs untuk mengambil kurs online.</div></div>
+    <div class="computed">Total investasi sistem (CAPEX)<b id="capexPreview">—</b></div>
+    <div class="computed">Produksi energi tahun pertama<b id="energyPreview">—</b><span class="hint">Kapasitas × PSH × 365 hari; sebelum rugi sistem.</span></div>
+   </div>
+   <h2 class="section-title">02 · Energy & Revenue</h2>
+   <div class="field"><label>Degradasi PLTS <span>%/tahun</span></label><input id="degradation" type="number" value="0.5" step="0.1"></div>
+   <div class="field"><label>Tarif listrik tahun pertama <span>Rp/kWh</span></label><input id="tariff" type="number" value="1500" step="50"></div>
+   <div class="field"><label>Kenaikan tarif listrik <span>%/tahun</span></label><input id="tariffEsc" type="number" value="3" step="0.1"></div>
+   <div class="field"><label>Persentase energi termanfaatkan <span>%</span></label><input id="utilization" type="number" value="100" min="0" max="100" step="1"></div>
+   <h2 class="section-title">03 · O&M & Operational</h2>
+   <div class="field"><label>O&M tahun pertama <span>Rp/tahun</span></label><input id="om" type="number" value="50000000" step="1000000"></div>
+   <div class="field"><label>Biaya operasional tahun pertama <span>Rp/tahun</span></label><input id="operational" type="number" value="30000000" step="1000000"></div>
+   <div class="field"><label>Inflasi biaya <span>%/tahun</span></label><input id="inflation" type="number" value="3" step="0.1"></div>
+   <h2 class="section-title">04 · Financial & Battery</h2>
+   <div class="field"><label>Cost of Money / Discount Rate <span>%/tahun</span></label><input id="discount" type="number" value="10" step="0.1"></div>
+   <div class="field"><label>Umur proyek <span>tahun (maks. 30)</span></label><input id="life" type="number" value="25" min="1" max="30" step="1"></div>
+   <div class="field"><label>Tahun penggantian baterai <span>tahun</span></label><input id="replaceYear" type="number" value="12" min="0" step="1"></div>
+   <div class="field"><label>Biaya penggantian baterai <span>Rp</span></label><input id="replaceCost" type="number" value="800000000" step="10000000"></div>
+   <div class="hint">Jika Battery = Tidak, biaya replacement otomatis tidak dimasukkan. CAPEX tetap dihitung dari kapasitas sistem × 1.000 × USD/Wp × kurs.</div>
+   <h2 class="section-title">05 · PVGIS Solar Resource</h2>
+   <div class="field"><label>Latitude <span>°</span></label><input id="lat" type="number" step="0.000001" value="-7.7956"></div>
+   <div class="field"><label>Longitude <span>°</span></label><input id="lon" type="number" step="0.000001" value="110.3695"></div>
+   <div class="field"><label>Performance Ratio PVGIS <span>%</span></label><input id="pr" type="number" min="1" max="100" step="1" value="80"></div>
+   <div class="field"><label>Tanggal profil harian TMY</label><div class="fxrow"><select id="month" style="flex:1"><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6" selected>Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select><input id="day" type="number" min="1" max="31" value="21" style="max-width:72px"></div></div>
+   <button id="pvgisBtn" style="width:100%;margin:3px 0 8px" onclick="loadPVGIS()">Update Solar Data · PVGIS</button>
+   <div class="computed">PVGIS TMY status<b id="pvgisStatus">Belum terhubung</b><span class="hint" id="pvgisMeta">Data 8.760 jam akan digunakan untuk estimasi energi tahunan dan pembaruan BEP, IRR, NPV.</span></div>
+  </aside>
+  <main class="main">
+   <section class="kpis">
+    <div class="panel kpi" style="--accent:#2563eb"><div class="label">TOTAL INVESTMENT</div><div class="value" id="kCapex">—</div><div class="note">CAPEX · IDR</div></div>
+    <div class="panel kpi" style="--accent:#0d9488"><div class="label">PROJECT IRR</div><div class="value" id="kIRR">—</div><div class="note">Internal Rate of Return</div></div>
+    <div class="panel kpi" style="--accent:#e9a23b"><div class="label">NET PRESENT VALUE</div><div class="value" id="kNPV">—</div><div class="note">NPV · IDR</div></div>
+    <div class="panel kpi" style="--accent:#8064a2"><div class="label">SIMPLE PAYBACK</div><div class="value" id="kBEP">—</div><div class="note">First positive cumulative cash flow</div></div>
+    <div class="panel kpi" style="--accent:#64748b"><div class="label">DISCOUNTED PAYBACK</div><div class="value" id="kDBEP">—</div><div class="note">After discounting</div></div>
+   </section>
+   <section class="gauges">
+    <div class="panel gauge-card"><div class="gauge-title">IRR Performance</div><div class="gauge-sub">Target pembanding adalah Cost of Money</div><div class="gauge-wrap"><svg id="irrGauge" class="gauge-svg" viewBox="0 0 320 180"></svg><div class="gauge-value"><strong id="irrGaugeValue">—</strong><span>PROJECT IRR</span></div></div><div class="gauge-foot"><span>0%</span><span>15%</span><span>30%+</span></div></div>
+    <div class="panel gauge-card"><div class="gauge-title">Simple Payback Period</div><div class="gauge-sub">Semakin cepat pengembalian, semakin baik</div><div class="gauge-wrap"><svg id="bepGauge" class="gauge-svg" viewBox="0 0 320 180"></svg><div class="gauge-value"><strong id="bepGaugeValue">—</strong><span>PAYBACK PERIOD</span></div></div><div class="gauge-foot"><span>0 th</span><span>12,5 th</span><span>25 th+</span></div></div>
+   </section>
+   <section class="panel" style="padding:14px 17px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><b style="font-size:13px">Investment Assessment</b><div class="hint">Berdasarkan IRR dibandingkan Cost of Money dan nilai NPV</div></div><span id="statusBadge" class="badge">—</span></div><div class="hint" id="statusText" style="margin-top:9px"></div></section>
+   <section class="charts">
+    <div class="panel chart-card"><div class="chart-head"><b>Cumulative Cash Flow</b><span>IDR</span></div><svg id="cashChart" class="chart" viewBox="0 0 520 230"></svg><div class="legend"><span><i class="dot" style="background:#2563eb"></i>Cumulative cash flow</span><span><i class="dot" style="background:#16a36a"></i>BEP line (zero)</span></div></div>
+    <div class="panel chart-card"><div class="chart-head"><b>Annual Energy Generation</b><span>kWh/year</span></div><svg id="energyChart" class="chart" viewBox="0 0 520 230"></svg><div class="legend"><span><i class="dot" style="background:#0d9488"></i>Energy generated</span></div></div>
+    <div class="panel chart-card"><div class="chart-head"><b>Annual Electricity Cost Saving</b><span>IDR/year</span></div><svg id="savingChart" class="chart" viewBox="0 0 520 230"></svg><div class="legend"><span><i class="dot" style="background:#e9a23b"></i>Annual saving</span></div></div>
+    <div class="panel chart-card"><div class="chart-head"><b>Cumulative Discounted Cash Flow</b><span>IDR</span></div><svg id="dcfChart" class="chart" viewBox="0 0 520 230"></svg><div class="legend"><span><i class="dot" style="background:#8064a2"></i>Discounted cumulative CF</span><span><i class="dot" style="background:#16a36a"></i>Zero line</span></div></div>
+   </section>
+   <section class="panel table-card">
+    <div class="chart-head"><b>PVGIS Typical Meteorological Year · Hourly Profile</b><span id="pvgisSource">Menunggu data PVGIS</span></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr);margin:10px 0">
+     <div class="panel kpi"><div class="label">ANNUAL GHI</div><div class="value" id="pvgisGhi">—</div><div class="note">kWh/m²/year</div></div>
+     <div class="panel kpi"><div class="label">ESTIMATED PV ENERGY</div><div class="value" id="pvgisEnergy">—</div><div class="note">kWh/year · GHI × kWp × PR</div></div>
+     <div class="panel kpi"><div class="label">SELECTED DAY GHI</div><div class="value" id="pvgisDayGhi">—</div><div class="note">kWh/m²/day</div></div>
+    </div>
+    <div class="table-scroll" style="max-height:250px"><table><thead><tr><th>Jam WIB</th><th>GHI (W/m²)</th><th>DNI (W/m²)</th><th>DHI (W/m²)</th><th>Temperatur (°C)</th></tr></thead><tbody id="pvgisHourlyRows"><tr><td colspan="5" style="text-align:center">Klik Update Solar Data untuk mengambil data TMY.</td></tr></tbody></table></div>
+    <div class="footnote">Catatan: estimasi energi tahunan memakai integrasi GHI horizontal PVGIS × kapasitas kWp × Performance Ratio. Ini merupakan pendekatan screening, bukan simulasi PV final berbasis POA/kemiringan modul, inverter, shading, clipping, dan konfigurasi string.</div>
+   </section>
+   <section class="panel table-card"><div class="chart-head"><b>Annual Financial Projection</b><span id="tableMeta">—</span></div><div class="table-scroll"><table><thead><tr><th>Year</th><th>Energy Generated (kWh)</th><th>Energy Utilized (kWh)</th><th>Tariff (Rp/kWh)</th><th>Saving (Rp)</th><th>O&M (Rp)</th><th>Operational (Rp)</th><th>Battery Replacement (Rp)</th><th>Net Cash Flow (Rp)</th><th>Cumulative CF (Rp)</th></tr></thead><tbody id="projectionRows"></tbody></table></div><div class="footnote">Catatan model: Jika PVGIS aktif, produksi tahun pertama = total GHI TMY × kapasitas × PR (screening); jika belum aktif, kapasitas × PSH × 365. Belum memasukkan Performance Ratio, losses, pajak, pembiayaan utang, nilai residu, atau pendapatan ekspor listrik. Saving dihitung dari energi termanfaatkan × tarif listrik. Hasil merupakan simulasi awal dan perlu divalidasi dengan data teknis proyek.</div></section>
+  </main>
+ </div>
 </div>
-<div class="actions"><button id="loadBtn" onclick="loadPVGIS()">Update Solar Data</button><button class="secondary" onclick="resetExample()">Reset contoh</button></div>
-<div id="status" class="status">Data PVGIS belum diambil. Klik Update Solar Data.</div>
-<div class="note">Data yang diambil adalah TMY (cuaca meteorologi tipikal), bukan prakiraan cuaca hari ini. Estimasi produksi berbasis GHI × kapasitas × PR sebagai pendekatan awal.</div>
-</section>
-<section>
-<div class="metrics">
-<div class="metric"><span>GHI hari simulasi</span><strong id="ghiMetric">—</strong><small>kWh/m²/day</small></div>
-<div class="metric"><span>Produksi PV</span><strong id="pvMetric">—</strong><small>kWh/day</small></div>
-<div class="metric"><span>Energi impor PLN</span><strong id="gridMetric">—</strong><small>kWh/day</small></div>
-<div class="metric"><span>Penghematan estimasi</span><strong id="savingMetric">—</strong><small>Rp/month</small></div>
-</div>
-<div class="panel">
-<div class="toolbar"><div><h2>Hourly Energy Simulation</h2><p class="sub">Aliran energi per jam berdasarkan data PVGIS TMY</p></div><span class="pill" id="sourceTag">Menunggu data PVGIS</span></div>
-<div class="chartbox"><canvas id="energyChart"></canvas></div>
-</div>
-<div class="charts">
-<div class="panel"><h2>Battery State of Charge</h2><div class="chartbox"><canvas id="socChart"></canvas></div></div>
-<div class="panel"><h2>Solar Irradiance (GHI)</h2><div class="chartbox"><canvas id="ghiChart"></canvas></div></div>
-</div>
-</section>
-</div>
-<section class="panel" style="margin-top:18px">
-<div class="toolbar"><div><h2>Hourly Simulation Table</h2><p class="sub">Jam lokal WIB · energi per interval satu jam</p></div><button class="secondary" onclick="downloadCSV()">Export CSV</button></div>
-<div class="tablewrap"><table><thead><tr><th>Jam WIB</th><th>GHI W/m²</th><th>Beban kWh</th><th>PV kWh</th><th>PV ke beban</th><th>Charge</th><th>Discharge</th><th>Impor PLN</th><th>SOC %</th></tr></thead><tbody id="rows"><tr><td colspan="9" style="text-align:center;color:#64748b">Belum ada data. Ambil data PVGIS terlebih dahulu.</td></tr></tbody></table></div>
-</section>
-<section class="panel" style="margin-top:18px">
-<h2>Financial Snapshot (indikatif)</h2><div class="metrics" style="margin-bottom:0">
-<div class="metric"><span>Estimasi CAPEX</span><strong id="capexMetric">—</strong></div>
-<div class="metric"><span>Penghematan tahunan</span><strong id="annualMetric">—</strong></div>
-<div class="metric"><span>Simple Payback</span><strong id="paybackMetric">—</strong></div>
-<div class="metric"><span>O&M tahunan</span><strong id="omMetric">—</strong></div>
-</div><div class="note">Financial snapshot ini estimasi awal dari satu hari TMY yang dipilih dan belum menggantikan analisis 8.760 jam tahunan. Belum memperhitungkan ekspor listrik ke PLN, pajak/admin, degradasi modul, replacement battery, pembiayaan, dan tarif khusus pelanggan.</div>
-</section>
-</main>
 <script>
-const months=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-document.getElementById("month").innerHTML=months.map((m,i)=>`<option value="${i+1}" ${i===5?"selected":""}>${m}</option>`).join("");
-let simRows=[],charts={};
-const num=id=>Number(document.getElementById(id).value);
-const money=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n);
-const fmt=n=>new Intl.NumberFormat("id-ID",{maximumFractionDigits:2}).format(n);
-function setStatus(msg,type=""){let e=document.getElementById("status");e.textContent=msg;e.className="status "+type}
+const defaults={capacity:500,priceWp:.3444,psh:5,battery:"Tidak",fx:18293,degradation:.5,tariff:1500,tariffEsc:3,utilization:100,om:50000000,operational:30000000,inflation:3,discount:10,life:25,replaceYear:12,replaceCost:800000000};
+const ids=Object.keys(defaults);
+const el=id=>document.getElementById(id);
+const num=id=>Math.max(0,Number(el(id).value)||0);
+const rupiah=v=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(v);
+const compact=v=>{let a=Math.abs(v);if(a>=1e12)return 'Rp '+(v/1e12).toFixed(2)+' T';if(a>=1e9)return 'Rp '+(v/1e9).toFixed(2)+' M';if(a>=1e6)return 'Rp '+(v/1e6).toFixed(1)+' jt';return rupiah(v)};
+const fmt=v=>new Intl.NumberFormat('id-ID',{maximumFractionDigits:0}).format(v);
+function read(){let p={};ids.forEach(k=>p[k]=k==='battery'?el(k).value:num(k));p.life=Math.min(30,Math.max(1,Math.round(p.life)));p.utilization=Math.min(100,p.utilization);return p}
+function irr(cfs){const f=r=>cfs.reduce((s,v,i)=>s+v/Math.pow(1+r,i),0);let lo=-.99,hi=5;if(!Number.isFinite(f(lo))||f(lo)*f(hi)>0)return null;for(let i=0;i<180;i++){let mid=(lo+hi)/2;if(f(mid)>0)lo=mid;else hi=mid}return (lo+hi)/2}
+function calculate(p){const capex=p.capacity*1000*p.priceWp*p.fx;const energy0=(window.pvgisAnnualPerKwp?window.pvgisAnnualPerKwp*p.capacity:p.capacity*p.psh*365);let rows=[{year:0,net:-capex,cum:-capex,dcum:-capex}];let cum=-capex,dcum=-capex,flows=[-capex],bep=null,dbep=null;
+for(let y=1;y<=p.life;y++){let energy=energy0*Math.pow(1-p.degradation/100,y-1);let utilized=energy*p.utilization/100;let tariff=p.tariff*Math.pow(1+p.tariffEsc/100,y-1);let saving=utilized*tariff;let om=p.om*Math.pow(1+p.inflation/100,y-1);let op=p.operational*Math.pow(1+p.inflation/100,y-1);let replacement=(p.battery==='Ya'&&p.replaceYear===y)?p.replaceCost:0;let net=saving-om-op-replacement;cum+=net;let pv=net/Math.pow(1+p.discount/100,y);dcum+=pv;flows.push(net);if(bep===null&&cum>=0)bep=y;if(dbep===null&&dcum>=0)dbep=y;rows.push({year:y,energy,utilized,tariff,saving,om,op,replacement,net,cum,pv,dcum})}
+let npv=rows.slice(1).reduce((s,r)=>s+r.pv,0)-capex;return {capex,energy0,rows,irr:irr(flows),npv,bep,dbep,flows}}
+function gauge(svgId,value,max,kind){const svg=el(svgId);const cx=160,cy=155,r=112;function pt(deg){let a=deg*Math.PI/180;return [cx+r*Math.cos(a),cy+r*Math.sin(a)]}function arc(a1,a2,color){let p1=pt(a1),p2=pt(a2);return `<path d="M ${p1[0]} ${p1[1]} A ${r} ${r} 0 0 1 ${p2[0]} ${p2[1]}" fill="none" stroke="${color}" stroke-width="19" stroke-linecap="round"/>`}let colors=kind==='irr'?['#e36b6b','#efbd55','#35ad7b']:['#35ad7b','#efbd55','#e36b6b'];let angle=-180+Math.max(0,Math.min(1,value/max))*180;let needle=pt(angle);svg.innerHTML=arc(-180,-120,colors[0])+arc(-118,-62,colors[1])+arc(-60,0,colors[2])+`<line x1="${cx}" y1="${cy}" x2="${needle[0]}" y2="${needle[1]}" stroke="#183653" stroke-width="4" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="8" fill="#183653"/><text x="22" y="174" font-size="10" fill="#718096">${kind==='irr'?'0%':'0'}</text><text x="282" y="174" font-size="10" fill="#718096">${kind==='irr'?'30%':'25'}</text>`}
+function lineChart(svgId,values,color,zero=false,asMoney=false){let svg=el(svgId),W=520,H=230,L=55,R=15,T=12,B=30,iw=W-L-R,ih=H-T-B;let vals=values.map(x=>x.v);let min=Math.min(...vals,zero?0:Infinity),max=Math.max(...vals,zero?0:-Infinity);if(min===max){min-=1;max+=1}let pad=(max-min)*.12;min-=pad;max+=pad;const x=i=>L+(i/(values.length-1||1))*iw,y=v=>T+(max-v)/(max-min)*ih;let grid='';for(let j=0;j<=4;j++){let v=min+(max-min)*j/4,yy=y(v);grid+=`<line class="grid" x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/><text x="${L-7}" y="${yy+3}" text-anchor="end">${short(v)}</text>`}let path=values.map((d,i)=>(i?'L':'M')+x(i)+' '+y(d.v)).join(' ');let area=path+` L ${x(values.length-1)} ${y(Math.max(min,Math.min(max,0)))} L ${x(0)} ${y(Math.max(min,Math.min(max,0)))} Z`;let zeroLine=zero&&min<0&&max>0?`<line x1="${L}" y1="${y(0)}" x2="${W-R}" y2="${y(0)}" stroke="#16a36a" stroke-width="2" stroke-dasharray="5 4"/>`:'';let ticks='';[0,Math.floor((values.length-1)/2),values.length-1].forEach(i=>{ticks+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${values[i].label}</text>`});svg.innerHTML=grid+zeroLine+`<path d="${area}" fill="${color}" opacity=".09"/><path d="${path}" fill="none" stroke="${color}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+ticks}
+function short(v){let a=Math.abs(v);if(a>=1e12)return (v/1e12).toFixed(1)+'T';if(a>=1e9)return (v/1e9).toFixed(1)+'B';if(a>=1e6)return (v/1e6).toFixed(0)+'M';if(a>=1e3)return (v/1e3).toFixed(0)+'k';return v.toFixed(0)}
+function render(){let p=read(),d=calculate(p);el('capexPreview').textContent=rupiah(d.capex);el('energyPreview').textContent=fmt(d.energy0)+' kWh/year';el('kCapex').textContent=compact(d.capex);el('kIRR').textContent=d.irr===null?'N/A':(d.irr*100).toFixed(2)+'%';el('kNPV').textContent=compact(d.npv);el('kBEP').textContent=d.bep===null?'> '+p.life+' th':d.bep+' th';el('kDBEP').textContent=d.dbep===null?'> '+p.life+' th':d.dbep+' th';el('irrGaugeValue').textContent=d.irr===null?'N/A':(d.irr*100).toFixed(1)+'%';el('bepGaugeValue').textContent=d.bep===null?'No BEP':d.bep+' th';gauge('irrGauge',d.irr===null?0:d.irr*100,30,'irr');gauge('bepGauge',d.bep===null?25:d.bep,25,'bep');
+let ok=d.npv>0&&d.irr!==null&&d.irr*100>p.discount;el('statusBadge').textContent=ok?'POTENTIALLY FEASIBLE':'REQUIRES REVIEW';el('statusBadge').className='badge'+(ok?'':' warn');el('statusText').textContent=ok?'NPV positif dan IRR lebih tinggi daripada Cost of Money berdasarkan asumsi yang dimasukkan.':'NPV tidak positif atau IRR belum melampaui Cost of Money. Evaluasi CAPEX, tarif, energi termanfaatkan, dan biaya operasional.';
+lineChart('cashChart',d.rows.map(r=>({v:r.cum,label:r.year})), '#2563eb',true,true);lineChart('energyChart',d.rows.slice(1).map(r=>({v:r.energy,label:r.year})),'#0d9488');lineChart('savingChart',d.rows.slice(1).map(r=>({v:r.saving,label:r.year})),'#e9a23b');lineChart('dcfChart',d.rows.map(r=>({v:r.dcum,label:r.year})),'#8064a2',true,true);
+el('tableMeta').textContent=p.life+' years · Battery '+p.battery;el('projectionRows').innerHTML=d.rows.slice(1).map(r=>`<tr><td>${r.year}</td><td>${fmt(r.energy)}</td><td>${fmt(r.utilized)}</td><td>${fmt(r.tariff)}</td><td>${fmt(r.saving)}</td><td>${fmt(r.om)}</td><td>${fmt(r.op)}</td><td>${fmt(r.replacement)}</td><td class="${r.net>=0?'positive':'negative'}">${fmt(r.net)}</td><td class="${r.cum>=0?'positive':'negative'}">${fmt(r.cum)}</td></tr>`).join('');window.currentData={p,d}}
+function resetDefaults(){ids.forEach(k=>el(k).value=defaults[k]);render()}
+async function refreshFX(){el('fxNote').textContent='Mengambil kurs USD/IDR…';try{let r=await fetch('https://open.er-api.com/v6/latest/USD');let j=await r.json();if(!j.rates||!j.rates.IDR)throw new Error('Rate tidak tersedia');el('fx').value=Math.round(j.rates.IDR);el('fxNote').textContent='Kurs API berhasil diperbarui · '+new Date(j.time_last_update_utc).toLocaleString('id-ID');render()}catch(e){el('fxNote').textContent='Kurs online gagal diambil. Silakan isi kurs manual; nilai terakhir tetap digunakan.'}}
+function downloadCSV(){let {p,d}=window.currentData;let rows=[['Year','Energy Generated kWh','Energy Utilized kWh','Tariff IDR/kWh','Saving IDR','OM IDR','Operational IDR','Battery Replacement IDR','Net Cash Flow IDR','Cumulative CF IDR','Cumulative Discounted CF IDR']];d.rows.slice(1).forEach(r=>rows.push([r.year,r.energy,r.utilized,r.tariff,r.saving,r.om,r.op,r.replacement,r.net,r.cum,r.dcum]));let csv=rows.map(r=>r.join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='Jaya_PLTS_BESS_Cashflow.csv';a.click();URL.revokeObjectURL(a.href)}
+let pvgisHourly=[];
+window.pvgisAnnualPerKwp=null;
+function setPVGISStatus(msg,ok=false){el('pvgisStatus').textContent=msg;el('pvgisStatus').style.color=ok?'#16804f':'#a65d12'}
 async function loadPVGIS(){
- const btn=document.getElementById("loadBtn");btn.disabled=true;setStatus("Menghubungi PVGIS melalui Netlify Function…");
+ const btn=el('pvgisBtn');btn.disabled=true;setPVGISStatus('Menghubungi PVGIS…');
  try{
-  const lat=num("lat"),lon=num("lon");
-  if(!Number.isFinite(lat)||Math.abs(lat)>90||!Number.isFinite(lon)||Math.abs(lon)>180)throw Error("Koordinat tidak valid.");
-  const url = `/.netlify/functions/pvgis-tmy?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&v=2`;
-  const res=await fetch(url);const data=await res.json();if(!res.ok)throw Error(data.error||"Gagal mengambil data PVGIS.");
-  const month=num("month"),day=num("day");
-  const chosen=data.hourly.filter(x=>x.month===month&&x.day===day);
-  if(chosen.length!==24)throw Error(`Data untuk ${day}/${month} tidak lengkap (${chosen.length} jam). Coba tanggal lain.`);
-  simulate(chosen);
-  document.getElementById("sourceTag").textContent=`PVGIS TMY · ${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)}`;
-  setStatus(`Berhasil mengambil ${data.count.toLocaleString("id-ID")} data TMY. Simulasi ${day}/${month} WIB diperbarui.`,"ok");
- }catch(e){setStatus(e.message+" Pastikan website sudah di-deploy ke Netlify (Netlify Function tidak berjalan saat file HTML dibuka lokal).","err")}
+  const lat=Number(el('lat').value),lon=Number(el('lon').value);
+  if(!Number.isFinite(lat)||Math.abs(lat)>90||!Number.isFinite(lon)||Math.abs(lon)>180)throw Error('Koordinat latitude/longitude tidak valid.');
+  const url=`/.netlify/functions/pvgis-tmy?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+  const response=await fetch(url);const data=await response.json();if(!response.ok)throw Error(data.error||'PVGIS gagal mengirim data.');
+  if(!Array.isArray(data.hourly)||data.hourly.length<8000)throw Error('Data TMY tidak lengkap.');
+  pvgisHourly=data.hourly;
+  const ghiAnnual=pvgisHourly.reduce((s,h)=>s+(Number(h.ghi)||0),0)/1000;
+  const pr=Math.min(100,Math.max(1,Number(el('pr').value)||80))/100;
+  window.pvgisAnnualPerKwp=ghiAnnual*pr;
+  const month=Number(el('month').value)||6,day=Number(el('day').value)||21;
+  let selected=pvgisHourly.filter(h=>h.month===month&&h.day===day);
+  if(selected.length!==24){const maxDay=new Date(2020,month,0).getDate();el('day').value=Math.min(day,maxDay);selected=pvgisHourly.filter(h=>h.month===month&&h.day===Number(el('day').value));}
+  el('pvgisGhi').textContent=fmt(ghiAnnual);
+  el('pvgisEnergy').textContent=fmt(ghiAnnual*pr*num('capacity'));
+  el('pvgisDayGhi').textContent=fmt(selected.reduce((s,h)=>s+(Number(h.ghi)||0),0)/1000);
+  el('pvgisSource').textContent=`PVGIS 5.3 TMY · ${Number(data.latitude).toFixed(4)}, ${Number(data.longitude).toFixed(4)} · ${data.count.toLocaleString('id-ID')} jam`;
+  el('pvgisMeta').textContent=`Annual GHI ${fmt(ghiAnnual)} kWh/m² · PR ${fmt(pr*100)}% · data TMY terhubung ke proyeksi finansial.`;
+  el('pvgisHourlyRows').innerHTML=selected.map(h=>`<tr><td>${String(h.hour).padStart(2,'0')}:00</td><td>${fmt(h.ghi)}</td><td>${fmt(h.dni)}</td><td>${fmt(h.dhi)}</td><td>${fmt(h.temp)}</td></tr>`).join('');
+  setPVGISStatus('Terhubung · 8.760 data diterima',true);
+  render();
+ }catch(e){setPVGISStatus('Gagal: '+e.message);el('pvgisMeta').textContent='Periksa Netlify Function dan deployment. Dashboard keuangan tetap memakai PSH manual sampai PVGIS berhasil dimuat.';}
  finally{btn.disabled=false}
 }
-function simulate(hours){
- const loadDaily=num("bill")/Math.max(1,num("tariff"))/30;
- const dayShare=num("dayLoad")/100, loadDay=loadDaily*dayShare/11,loadNight=loadDaily*(1-dayShare)/13;
- const kwp=num("kwp"),pr=num("pr")/100,battOn=document.getElementById("battery").value==="yes";
- const cap=battOn?num("battKwh"):0,min=num("minSoc")/100,eff=num("eff")/100;
- let soc=cap, totalGhi=0,totalPv=0,totalGrid=0,totalDirect=0,totalCharge=0,totalDis=0;
- simRows=hours.map(h=>{
-  const hour=h.hour,load=(hour>=7&&hour<18)?loadDay:loadNight;
-  const ghi=h.ghi,pv=ghi/1000*kwp*pr;
-  const direct=Math.min(load,pv),surplus=Math.max(0,pv-direct),deficit=Math.max(0,load-direct);
-  const charge=battOn?Math.min(surplus,Math.max(0,cap-soc)/Math.max(eff,.01)):0;
-  soc=Math.min(cap,soc+charge*eff);
-  const discharge=battOn?Math.min(deficit,Math.max(0,soc-cap*min)*eff):0;
-  soc=Math.max(cap*min,soc-discharge/Math.max(eff,.01));
-  const grid=Math.max(0,deficit-discharge);
-  totalGhi+=ghi/1000;totalPv+=pv;totalGrid+=grid;totalDirect+=direct;totalCharge+=charge;totalDis+=discharge;
-  return {time:h.time,hour,ghi,load,pv,direct,charge,discharge,grid,socPct:cap?soc/cap*100:0};
- });
- const utilized=totalDirect+totalDis, saving=utilized*num("tariff")*30;
- document.getElementById("ghiMetric").textContent=fmt(totalGhi);
- document.getElementById("pvMetric").textContent=fmt(totalPv);
- document.getElementById("gridMetric").textContent=fmt(totalGrid);
- document.getElementById("savingMetric").textContent=money(saving);
- const capex=kwp*num("capex"),annual=saving*12,om=capex*num("om")/100,payback=(annual-om)>0?capex/(annual-om):null;
- document.getElementById("capexMetric").textContent=money(capex);
- document.getElementById("annualMetric").textContent=money(annual);
- document.getElementById("paybackMetric").textContent=payback?fmt(payback)+" tahun":"—";
- document.getElementById("omMetric").textContent=money(om);
- document.getElementById("rows").innerHTML=simRows.map(r=>`<tr><td>${String(r.hour).padStart(2,"0")}:00</td><td>${fmt(r.ghi)}</td><td>${fmt(r.load)}</td><td>${fmt(r.pv)}</td><td>${fmt(r.direct)}</td><td>${fmt(r.charge)}</td><td>${r.discharge?("-"+fmt(r.discharge)):"0"}</td><td>${fmt(r.grid)}</td><td>${fmt(r.socPct)}</td></tr>`).join("");
- drawCharts();
-}
-function chart(id,type,labels,datasets,opts={}){if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom"}},scales:{y:{beginAtZero:true,...(opts.y||{})}}}})}
-function drawCharts(){
- const labels=simRows.map(r=>String(r.hour).padStart(2,"0")+":00");
- chart("energyChart","line",labels,[
- {label:"Beban",data:simRows.map(r=>r.load),borderColor:"#64748b",backgroundColor:"#64748b",tension:.25},
- {label:"Produksi PV",data:simRows.map(r=>r.pv),borderColor:"#e6a23c",backgroundColor:"#e6a23c",tension:.25},
- {label:"Battery charge (+)",data:simRows.map(r=>r.charge),borderColor:"#0f9d8a",backgroundColor:"#0f9d8a",tension:.25},
- {label:"Battery discharge (-)",data:simRows.map(r=>-r.discharge),borderColor:"#2563eb",backgroundColor:"#2563eb",tension:.25}
- ]);
- chart("socChart","line",labels,[{label:"SOC (%)",data:simRows.map(r=>r.socPct),borderColor:"#0f9d8a",backgroundColor:"#0f9d8a",fill:true,tension:.25}],{y:{min:0,max:100}});
- chart("ghiChart","bar",labels,[{label:"GHI (W/m²)",data:simRows.map(r=>r.ghi),backgroundColor:"#e6a23c"}]);
-}
-function downloadCSV(){
- if(!simRows.length)return alert("Ambil data PVGIS terlebih dahulu.");
- const head=["time_WIB","GHI_Wm2","load_kWh","PV_kWh","PV_direct_kWh","battery_charge_kWh","battery_discharge_kWh","grid_import_kWh","SOC_percent"];
- const lines=[head.join(","),...simRows.map(r=>[r.time,r.ghi,r.load,r.pv,r.direct,r.charge,r.discharge,r.grid,r.socPct].join(","))];
- const a=document.createElement("a"),blob=new Blob([lines.join("\n")],{type:"text/csv"});a.href=URL.createObjectURL(blob);a.download="JAYA_PVGIS_hourly_simulation.csv";a.click();URL.revokeObjectURL(a.href);
-}
-function resetExample(){location.reload()}
+el('capacity').addEventListener('input',()=>{if(window.pvgisAnnualPerKwp){el('pvgisEnergy').textContent=fmt(window.pvgisAnnualPerKwp*num('capacity'));}});
+el('pr').addEventListener('change',()=>{if(pvgisHourly.length){window.pvgisAnnualPerKwp=pvgisHourly.reduce((s,h)=>s+(Number(h.ghi)||0),0)/1000*Math.min(100,Math.max(1,Number(el('pr').value)||80))/100;render();el('pvgisEnergy').textContent=fmt(window.pvgisAnnualPerKwp*num('capacity'));}});
+ids.forEach(k=>el(k).addEventListener('input',render));render();
 </script>
-</body></html>
+</body>
+</html>
