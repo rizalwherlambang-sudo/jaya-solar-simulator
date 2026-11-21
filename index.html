@@ -48,6 +48,13 @@ header{background:linear-gradient(120deg,#102746,#194d70);color:#fff;padding:26p
  button{display:none!important}
  .status{font-size:9px!important}
 }
+
+/* Project title input: prominent and easy to find */
+.project-title-field{background:#eef5ff;border:2px solid #2563eb;border-radius:12px;padding:14px;margin:12px 0 18px}
+.project-title-field label{display:block;font-size:13px;font-weight:800;color:#17428b;margin-bottom:8px}
+.project-title-field input{display:block;width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;border:1px solid #8aaee8;border-radius:8px;background:#fff;font-size:15px;font-weight:600;color:#172b4d}
+.project-title-field input:focus{outline:3px solid rgba(37,99,235,.18);border-color:#2563eb}
+.project-title-field .project-help{font-size:11px;color:#49658e;margin-top:7px}
 </style>
 </head>
 <body>
@@ -60,7 +67,7 @@ header{background:linear-gradient(120deg,#102746,#194d70);color:#fff;padding:26p
  <div class="layout">
   <aside class="panel inputs">
    <h2 class="section-title">Input Project</h2>
-   <div class="field"><label>Judul Proyek <span>ditampilkan pada halaman pertama PDF</span></label><input id="projectTitle" type="text" maxlength="120" placeholder="Contoh: PLTS & BESS – Proyek Pabrik Margorejo" value=""></div>
+   <div class="project-title-field"><label for="projectTitle">NAMA / JUDUL PROYEK</label><input id="projectTitle" type="text" maxlength="120" placeholder="Ketik nama proyek di sini…" value=""><div class="project-help">Nama ini akan dicantumkan pada halaman pertama saat dashboard dicetak atau disimpan sebagai PDF.</div></div>
    <div class="required">
     <h3>01 · PARAMETER WAJIB DIISI</h3>
     <div class="field"><label>Kapasitas sistem PLTS <span>kWp</span></label><input id="capacity" type="number" min="0" step="0.1" value="500"></div>
