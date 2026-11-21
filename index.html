@@ -89,7 +89,7 @@ async function loadPVGIS(){
  try{
   const lat=num("lat"),lon=num("lon");
   if(!Number.isFinite(lat)||Math.abs(lat)>90||!Number.isFinite(lon)||Math.abs(lon)>180)throw Error("Koordinat tidak valid.");
-  const url=`const response = await fetch(   `/.netlify/functions/pvgis-tmy?lat=${lat}&lon=${lon}&v=2` );?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+  const url = `/.netlify/functions/pvgis-tmy?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&v=2`;
   const res=await fetch(url);const data=await res.json();if(!res.ok)throw Error(data.error||"Gagal mengambil data PVGIS.");
   const month=num("month"),day=num("day");
   const chosen=data.hourly.filter(x=>x.month===month&&x.day===day);
