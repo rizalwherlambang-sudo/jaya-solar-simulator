@@ -50,7 +50,7 @@ export default async (request) => {
     }
 
     const hourly = source.map((item) => {
-      const stamp = String(item.time || "");
+      const stamp = String(item["time(UTC)"] || item.time || "");
       const match = stamp.match(/^(\d{4})(\d{2})(\d{2}):(\d{2})(\d{2})$/);
       if (!match) return null;
 
