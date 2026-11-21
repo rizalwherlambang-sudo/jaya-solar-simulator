@@ -18,6 +18,34 @@ header{background:linear-gradient(120deg,#102746,#194d70);color:#fff;padding:26p
 .table-card{padding:16px;overflow:hidden}.table-scroll{overflow:auto;max-height:390px}table{border-collapse:collapse;width:100%;font-size:11px;white-space:nowrap}th{background:#f0f4f9;color:#52647a;text-align:right;padding:10px 9px;position:sticky;top:0}th:first-child,td:first-child{text-align:left}td{padding:9px;border-bottom:1px solid #edf1f6;text-align:right}tr:hover td{background:#f8fbff}.positive{color:var(--green);font-weight:700}.negative{color:var(--red)}.footnote{font-size:10px;color:var(--muted);line-height:1.6;margin-top:12px}.badge{display:inline-block;padding:5px 9px;border-radius:30px;font-size:10px;font-weight:800;background:#e6f6ee;color:#16804f}.badge.warn{background:#fff1e8;color:#b45b28}
 @media(max-width:1100px){.layout{grid-template-columns:1fr}.inputs{position:static}.kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){header{padding:20px;align-items:flex-start;flex-direction:column}.wrap{padding:0 12px 30px}.kpis{grid-template-columns:repeat(2,1fr)}.gauges,.charts{grid-template-columns:1fr}.kpi .value{font-size:18px}.toolbar{align-items:flex-start;flex-direction:column}}
+@page{size:A4 landscape;margin:10mm}
+@media print{
+ *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ body{background:#fff!important;font-size:9px}
+ header{padding:10mm 8mm!important;break-after:avoid}
+ .wrap{max-width:none!important;margin:0!important;padding:5mm 0!important}
+ .toolbar{margin:0 0 5mm!important}
+ .toolbar button,.toolbar div button,.fxrow button,#pvgisBtn{display:none!important}
+ .layout{grid-template-columns:27% 1fr!important;gap:5mm!important;align-items:start!important}
+ .inputs{position:static!important;top:auto!important;box-shadow:none!important}
+ .panel{box-shadow:none!important;break-inside:avoid; border:1px solid #d9e1eb!important}
+ .main{gap:4mm!important}
+ .kpis{grid-template-columns:repeat(5,1fr)!important;gap:2mm!important}
+ .kpi{min-height:0!important;padding:3mm!important}
+ .kpi .value{font-size:15px!important;margin:5px 0 2px!important}
+ .gauges,.charts{grid-template-columns:1fr 1fr!important;gap:3mm!important}
+ .gauge-card,.chart-card,.table-card{padding:3mm!important}
+ .chart{height:165px!important}
+ .table-scroll{overflow:visible!important;max-height:none!important}
+ table{font-size:7px!important;white-space:normal!important;table-layout:auto!important}
+ th,td{padding:4px 3px!important;white-space:normal!important;overflow-wrap:anywhere}
+ th{position:static!important}
+ tr{break-inside:avoid}
+ .footnote,.hint{font-size:7px!important}
+ input,select{color:#172b4d!important;background:#fff!important}
+ button{display:none!important}
+ .status{font-size:9px!important}
+}
 </style>
 </head>
 <body>
@@ -26,7 +54,7 @@ header{background:linear-gradient(120deg,#102746,#194d70);color:#fff;padding:26p
  <div class="status">● INTERACTIVE FINANCIAL MODEL</div>
 </header>
 <div class="wrap">
- <div class="toolbar"><small>Ubah input di sebelah kiri. Seluruh KPI, speedometer, dan grafik akan diperbarui otomatis.</small><div><button class="secondary" onclick="resetDefaults()">Reset</button> <button onclick="downloadCSV()">Export Cash Flow CSV ↓</button></div></div>
+ <div class="toolbar"><small>Ubah input di sebelah kiri. Seluruh KPI, speedometer, dan grafik akan diperbarui otomatis.</small><div><button class="secondary" onclick="resetDefaults()">Reset</button> <button class="secondary" onclick="downloadCSV()">Export Cash Flow CSV ↓</button> <button onclick="printDashboard()">Cetak / Simpan PDF</button></div></div>
  <div class="layout">
   <aside class="panel inputs">
    <h2 class="section-title">Input Project</h2>
@@ -161,6 +189,7 @@ function render(){try{let p=read(),d=calculate(p);lastDispatch=d.dispatch;el('ca
 function multiChart(id,series){let svg=el(id),W=520,H=230,L=38,R=12,T=12,B=28,all=series.flatMap(s=>s.v),max=Math.max(1,...all)*1.12,x=i=>L+i/(23)*(W-L-R),y=v=>T+(max-v)/max*(H-T-B);let g='';for(let j=0;j<=4;j++){let yy=T+j*(H-T-B)/4;g+=`<line class="grid" x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/>`}let paths=series.map(s=>`<path d="${s.v.map((v,i)=>(i?'L':'M')+x(i)+' '+y(v)).join(' ')}" fill="none" stroke="${s.color}" stroke-width="2.5"/>`).join('');let ticks=[0,6,12,18,23].map(i=>`<text x="${x(i)}" y="${H-6}" text-anchor="middle">${String(i).padStart(2,'0')}</text>`).join('');svg.innerHTML=g+paths+ticks}
 function resetDefaults(){ids.forEach(k=>{if(el(k))el(k).value=defaults[k]});actualLoadProfile=null;render()}
 async function refreshFX(){el('fxNote').textContent='Mengambil kurs USD/IDR…';try{let r=await fetch('https://open.er-api.com/v6/latest/USD');let j=await r.json();if(!j.rates||!j.rates.IDR)throw new Error('Rate tidak tersedia');el('fx').value=Math.round(j.rates.IDR);el('fxNote').textContent='Kurs API berhasil diperbarui · '+new Date(j.time_last_update_utc).toLocaleString('id-ID');render()}catch(e){el('fxNote').textContent='Kurs online gagal diambil. Silakan isi kurs manual; nilai terakhir tetap digunakan.'}}
+function printDashboard(){render();window.print()}
 function downloadCSV(){let {p,d}=window.currentData;let rows=[['Year','Energy Generated kWh','Energy Utilized kWh','Tariff IDR/kWh','Saving IDR','OM IDR','Operational IDR','Battery Replacement IDR','Net Cash Flow IDR','Cumulative CF IDR','Cumulative Discounted CF IDR']];d.rows.slice(1).forEach(r=>rows.push([r.year,r.energy,r.utilized,r.tariff,r.saving,r.om,r.op,r.replacement,r.net,r.cum,r.dcum]));let csv=rows.map(r=>r.join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='Jaya_PLTS_BESS_Cashflow.csv';a.click();URL.revokeObjectURL(a.href)}
 function setPVGISStatus(msg,ok=false){el('pvgisStatus').textContent=msg;el('pvgisStatus').style.color=ok?'#16804f':'#a65d12'}
 async function loadPVGIS(){
